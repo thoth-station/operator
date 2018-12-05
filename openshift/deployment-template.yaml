@@ -75,11 +75,11 @@ objects:
                     configMapKeyRef:
                       name: thoth
                       key: prometheus-pushgateway-port
-                #- name: SENTRY_DSN
-                #  valueFrom:
-                #    secretKeyRef:
-                #      name: thoth
-                #      key: sentry-dsn
+                - name: SENTRY_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: sentry-dsn
               resources:
                 requests:
                   memory: "384Mi"

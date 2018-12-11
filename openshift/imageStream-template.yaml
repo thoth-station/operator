@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: operator-imagestream
+  annotations:
+    description: >
+      This is Operator ImageStream, this template is meant to be used by Bots, but could also be used by humans...
+    openshift.io/display-name: 'Thoth Core: Operator'
+    version: 0.0.1
+    tags: poc,thoth,operator,ai-stacks,aistacks
+    template.openshift.io/documentation-url: https://github.com/Thoth-Station/
+    template.openshift.io/long-description: >
+      This is Operator ImageStream, this template is meant to be used by Bots, but could also be used by humans...
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: operator-imagestream
+    app: thoth
+    component: operator
+
+objects:
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      labels:
+        app: thoth
+        component: operator
+      name: operator
+    spec:
+      name: ${IMAGE_STREAM_TAG}
+      lookupPolicy:
+        local: true
+
+parameters:
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'

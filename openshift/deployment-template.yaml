@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: operator-deployment
+  annotations:
+    description: This is Thoth - Operator
+    openshift.io/display-name: 'Thoth Core: Operator'
+    version: 0.0.1
+    tags: poc,thoth,operator,ai-stacks,aistacks
+    template.openshift.io/documentation-url: https://github.com/Thoth-Station/
+    template.openshift.io/long-description: >
+      This template defines resources needed to deploy Thoth Operator on OpenShift.
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: operator-deployment
+    app: thoth
+    component: operator
+
+objects:
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth
+        component: operator
+      name: operator
+    spec:
+      replicas: 1
+      selector:
+        name: operator
+      template:
+        metadata:
+          labels:
+            app: thoth
+            name: operator
+        spec:
+          serviceAccountName: analyzer
+          containers:
+            - name: operator
+              env:
+                - name: KUBERNETES_API_URL
+                  value: 'https://kubernetes.default.svc.cluster.local'
+                - name: KUBERNETES_VERIFY_TLS
+                  value: "0"
+                - name: THOTH_FRONTEND_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: frontend-namespace
+                      name: thoth
+                # TODO: adjust this
+                - name: THOTH_OPERATOR_NAMESPACE
+                  value: thoth-test-core
+                - name: THOTH_MIDDLETIER_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: middletier-namespace
+                      name: thoth
+                - name: THOTH_INFRA_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: infra-namespace
+                      name: thoth
+                - name: THOTH_BACKEND_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: backend-namespace
+                      name: thoth
+                - name: PROMETHEUS_PUSHGATEWAY_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      key: prometheus-pushgateway-host
+                      name: thoth
+                - name: PROMETHEUS_PUSHGATEWAY_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-pushgateway-port
+                - name: SENTRY_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: sentry-dsn
+              resources:
+                requests:
+                  memory: "384Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "384Mi"
+                  cpu: "250m"
+      test: false
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - operator
+            from:
+              kind: ImageStreamTag
+              name: 'operator:${IMAGE_STREAM_TAG}'
+
+parameters:
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'
+

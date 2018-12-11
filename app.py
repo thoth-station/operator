@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# thoth-operator
+# thoth-graph-sync-operator
 # Copyright(C) 2018 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Operator handling Thoth's workloads."""
+"""Operator handling Thoth's graph syncs."""
 
 import sys
 import os
@@ -31,7 +31,7 @@ from thoth.common import OpenShift
 
 init_logging()
 
-_LOGGER = logging.getLogger("thoth.operator")
+_LOGGER = logging.getLogger("thoth.graph_sync_operator")
 _OPENSHIFT = OpenShift()
 _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 
@@ -84,12 +84,12 @@ def _do_run_sync(template_name: str, document_id: str) -> str:
     help="Namespace to connect to to wait for events.",
 )
 def cli(operator_namespace: str, verbose: bool = False):
-    """Operator handling Thoth's workloads."""
+    """Operator handling Thoth's graph syncs."""
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
     _LOGGER.info(
-        "Operator is watching namespace %r", operator_namespace
+        "Graph sync operator is watching namespace %r", operator_namespace
     )
 
     config.load_incluster_config()
@@ -99,7 +99,7 @@ def cli(operator_namespace: str, verbose: bool = False):
     # Note that jobs do not support field selector pointing to phase (we could
     # do it on pod level, but that is not desired).
     for event in v1_jobs.watch(
-        namespace=operator_namespace, label_selector="operator=event"
+        namespace=operator_namespace, label_selector="operator=graph-sync"
     ):
         if event["type"] != "MODIFIED":
             # Skip additions and deletions...

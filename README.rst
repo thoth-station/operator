@@ -1,7 +1,7 @@
-Thoth's Operator
-----------------
+Thoth's Graph Sync Operator
+---------------------------
 
-OpenShift operator for managing Thoth's workloads.
+OpenShift operator for managing Thoth's graph syncs.
 
 
 Basic Usage

@@ -36,10 +36,11 @@ _OPENSHIFT = OpenShift()
 _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 
 # TODO: move operator configuration out of sources
+# Mapping from source job to destination job, boolean flag states if failed jobs should be synced as well.
 _CONFIG = {
-    "solver": "graph-sync-job-solver",
-    "inspection": "graph-sync-job-inspection",
-    "package-extract": "graph-sync-job-package-extract",
+    "solver": ("graph-sync-job-solver", False),
+    "inspection": ("graph-sync-job-inspection", True),
+    "package-extract": ("graph-sync-job-package-extract", False),
 }
 
 
@@ -104,8 +105,11 @@ def cli(operator_namespace: str, verbose: bool = False):
             # Skip additions and deletions...
             continue
 
-        if event["object"].status.succeeded != 1:
+        if event["object"].status.succeeded != 1 or event["object"].status.failed != 1
             # Skip modified events signalizing pod being scheduled.
+            # We also check for success of failed - the monitored jobs are
+            # configured to run once - if they fail they are not restarted.
+            # Thus continue on failed.
             continue
 
         _LOGGER.info("Handling event for %r", event["object"].metadata.name)
@@ -114,10 +118,18 @@ def cli(operator_namespace: str, verbose: bool = False):
         document_id = event["object"].metadata.name
         task_name = event["object"].metadata.labels.task
 
-        template_name = _CONFIG.get(task_name)
+        target = _CONFIG.get(task_name)
         if not template_name:
             _LOGGER.error(
                 "No template name defined to be used as a job for task %r", task_name
+            )
+            continue
+
+        template_name, sync_failed = target
+        if not sync_failed and event["object"].status.failed:
+            _LOGGER.info(
+                "Skipping failed job %r as operator was not configured to perform sync on failed jobs",
+                event["object"].metadata.name
             )
             continue
 

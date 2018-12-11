@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: operator-imagestream
+  name: graph-sync-operator-imagestream
   annotations:
     description: >
       This is Operator ImageStream, this template is meant to be used by Bots, but could also be used by humans...
     openshift.io/display-name: 'Thoth Core: Operator'
     version: 0.0.1
-    tags: poc,thoth,operator,ai-stacks,aistacks
+    tags: poc,thoth,graph-sync-operator,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This is Operator ImageStream, this template is meant to be used by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
   labels:
-    template: operator-imagestream
+    template: graph-sync-operator-imagestream
     app: thoth
-    component: operator
+    component: graph-sync-operator
 
 objects:
   - kind: ImageStream
@@ -23,8 +23,8 @@ objects:
     metadata:
       labels:
         app: thoth
-        component: operator
-      name: operator
+        component: graph-sync-operator
+      name: graph-sync-operator
     spec:
       name: ${IMAGE_STREAM_TAG}
       lookupPolicy:

@@ -39,6 +39,25 @@ objects:
           containers:
             - name: graph-sync-operator
               env:
+                - name: KUBERNETES_API_URL
+                  value: 'https://kubernetes.default.svc.cluster.local'		
+                - name: KUBERNETES_VERIFY_TLS		
+                  value: "0"		
+                - name: THOTH_FRONTEND_NAMESPACE		
+                  valueFrom:		
+                    configMapKeyRef:		
+                      key: frontend-namespace		
+                      name: thoth
+                - name: THOTH_MIDDLETIER_NAMESPACE	
+                  valueFrom:	
+                    configMapKeyRef:	
+                      key: middletier-namespace	
+                      name: thoth
+                - name: THOTH_BACKEND_NAMESPACE	
+                  valueFrom:	
+                    configMapKeyRef:	
+                      key: backend-namespace	
+                      name: thoth
                 # TODO: make namespace parameter
                 - name: THOTH_OPERATOR_NAMESPACE
                   value: thoth-test-core

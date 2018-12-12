@@ -105,7 +105,7 @@ def cli(operator_namespace: str, verbose: bool = False):
             # Skip additions and deletions...
             continue
 
-        if event["object"].status.succeeded != 1 or event["object"].status.failed != 1
+        if event["object"].status.succeeded != 1 or event["object"].status.failed != 1:
             # Skip modified events signalizing pod being scheduled.
             # We also check for success of failed - the monitored jobs are
             # configured to run once - if they fail they are not restarted.

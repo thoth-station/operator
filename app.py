@@ -101,7 +101,7 @@ def cli(operator_namespace: str, verbose: bool = False):
     for event in v1_jobs.watch(
         namespace=operator_namespace, label_selector="operator=graph-sync"
     ):
-        _LOGGER.debug("Handling event for: %s", event["object"].metadata.name)
+        _LOGGER.debug("Checking event for %r", event["object"].metadata.name)
         if event["type"] != "MODIFIED":
             # Skip additions and deletions...
             _LOGGER.debug("Skipping event, not modification event: %s", event["type"])

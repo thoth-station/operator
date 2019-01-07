@@ -61,6 +61,8 @@ objects:
                 # TODO: make namespace parameter
                 - name: THOTH_OPERATOR_NAMESPACE
                   value: thoth-test-core
+                - name: THOTH_LOG_GRAPH_SYNC_OPERATOR
+                  value: INFO
                 - name: THOTH_INFRA_NAMESPACE
                   valueFrom:
                     configMapKeyRef:

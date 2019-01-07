@@ -119,13 +119,13 @@ def cli(operator_namespace: str, verbose: bool = False):
         task_name = event["object"].metadata.labels.task
 
         target = _CONFIG.get(task_name)
+        template_name, sync_failed = target
         if not template_name:
             _LOGGER.error(
                 "No template name defined to be used as a job for task %r", task_name
             )
             continue
 
-        template_name, sync_failed = target
         if not sync_failed and event["object"].status.failed:
             _LOGGER.info(
                 "Skipping failed job %r as operator was not configured to perform sync on failed jobs",

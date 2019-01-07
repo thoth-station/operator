@@ -9,8 +9,8 @@ Basic Usage
 
 This operator is capable of triggering jobs based on success of previous jobs.
 The operator listens in a configured namespace for events that have label
-`operator=event` set and are job successful runs. Operator then checks label
-with key `task` - the value present under this key is used as a "task name"
+``operator=graph-sync`` set and are job successful runs. Operator then checks label
+with key ``task`` - the value present under this key is used as a "task name"
 stated in the configuration which states what template should be used to run a
 subsequent job.
 

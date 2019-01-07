@@ -101,15 +101,18 @@ def cli(operator_namespace: str, verbose: bool = False):
     for event in v1_jobs.watch(
         namespace=operator_namespace, label_selector="operator=graph-sync"
     ):
+        _LOGGER.debug("Handling event for: %s", event["object"].metadata.name)
         if event["type"] != "MODIFIED":
             # Skip additions and deletions...
+            _LOGGER.debug("Skipping event, not modification event: %s", event["type"])
             continue
 
-        if event["object"].status.succeeded != 1 or event["object"].status.failed != 1:
+        if not event["object"].status.succeeded and not event["object"].status.failed:
             # Skip modified events signalizing pod being scheduled.
             # We also check for success of failed - the monitored jobs are
             # configured to run once - if they fail they are not restarted.
             # Thus continue on failed.
+            _LOGGER.debug("Skipping event, no succeeded nor failed in status reported: %s", event["object"].status)
             continue
 
         _LOGGER.info("Handling event for %r", event["object"].metadata.name)

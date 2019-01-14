@@ -44,31 +44,6 @@ _CONFIG = {
 }
 
 
-def _do_run_sync(template_name: str, document_id: str) -> str:
-    """Run the given job described by template, supply document id as a parameter."""
-    response = _OPENSHIFT.ocp_client.resources.get(
-        api_version="v1", kind="Template"
-    ).get(namespace=_INFRA_NAMESPACE, label_selector=f"template={template_name}")
-    _OPENSHIFT._raise_on_invalid_response_size(response)
-    template = response.to_dict()["items"][0]
-
-    _OPENSHIFT.set_template_parameters(template, THOTH_SYNC_DOCUMENT_ID=document_id)
-
-    template = _OPENSHIFT.oc_process(
-        _INFRA_NAMESPACE, template
-    )  # TODO: pass correct namespace depending on sync type
-    sync = template["objects"][0]
-
-    response = _OPENSHIFT.ocp_client.resources.get(
-        api_version=sync["apiVersion"], kind=sync["kind"]
-    ).create(
-        body=sync, namespace=_INFRA_NAMESPACE  # TODO: pass correct namespace
-    )
-
-    _LOGGER.info("Scheduled new sync with id %r", response.metadata.name)
-    return response.metadata.name
-
-
 @click.command()
 @click.option(
     "--verbose",
@@ -137,7 +112,12 @@ def cli(operator_namespace: str, verbose: bool = False):
             continue
 
         try:
-            _do_run_sync(template_name, document_id)
+            graph_sync_id = _OPENSHIFT.schedule_graph_sync(
+                document_id,
+                operator_namespace,
+                template_name=template_name
+            )
+            _LOGGER.info("Scheduled new graph sync with id %r", graph_sync_id)
         except Exception as exc:
             _LOGGER.exception(
                 "Failed to run sync for document id %r, the template to be triggered was %r: %s",

@@ -24,7 +24,7 @@ objects:
       labels:
         app: thoth
         component: graph-sync-operator
-      name: graph-sync-operator
+      name: "graph-sync-operator-${THOTH_OPERATOR_NAMESPACE}"
     spec:
       replicas: 1
       selector:
@@ -35,7 +35,7 @@ objects:
             app: thoth
             name: graph-sync-operator
         spec:
-          serviceAccountName: analyzer
+          serviceAccountName: "${THOTH_SERVICE_ACCOUNT_NAME}"
           containers:
             - name: graph-sync-operator
               env:
@@ -58,9 +58,8 @@ objects:
                     configMapKeyRef:	
                       key: backend-namespace	
                       name: thoth
-                # TODO: make namespace parameter
                 - name: THOTH_OPERATOR_NAMESPACE
-                  value: thoth-test-core
+                  value: ${THOTH_OPERATOR_NAMESPACE}
                 - name: THOTH_LOG_GRAPH_SYNC_OPERATOR
                   value: INFO
                 - name: THOTH_INFRA_NAMESPACE
@@ -109,3 +108,12 @@ parameters:
     name: IMAGE_STREAM_TAG
     value: 'latest'
 
+  - description: Name of the service account which allows operator schedule graph syncs in operated namespace.
+    displayName: Service account name
+    required: true
+    name: THOTH_SERVICE_ACCOUNT_NAME
+
+  - name: THOTH_OPERATOR_NAMESPACE
+    description: Namespace in which operator is handling events.
+    displayName: Operator namespace
+    required: true

@@ -71,7 +71,8 @@ def cli(operator_namespace: str, graph_sync_namespace: str, verbose: bool = Fals
         _LOGGER.setLevel(logging.DEBUG)
 
     _LOGGER.info(
-        "Graph sync operator is watching namespace %r", operator_namespace
+        "Graph sync operator is watching namespace %r and scheduling graph syncs in namespace %r",
+        operator_namespace, graph_sync_namespace
     )
 
     config.load_incluster_config()

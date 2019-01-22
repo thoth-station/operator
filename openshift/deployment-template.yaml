@@ -60,6 +60,8 @@ objects:
                       name: thoth
                 - name: THOTH_OPERATOR_NAMESPACE
                   value: ${THOTH_OPERATOR_NAMESPACE}
+                - name: THOTH_GRAPH_SYNC_NAMESPACE
+                  value: ${THOTH_GRAPH_SYNC_NAMESPACE}
                 - name: THOTH_LOG_GRAPH_SYNC_OPERATOR
                   value: INFO
                 - name: THOTH_INFRA_NAMESPACE
@@ -116,4 +118,9 @@ parameters:
   - name: THOTH_OPERATOR_NAMESPACE
     description: Namespace in which operator is handling events.
     displayName: Operator namespace
+    required: true
+
+  - name: THOTH_GRAPH_SYNC_NAMESPACE
+    description: Namespace in which graph syncs should be run.
+    displayName: Graph sync namespace
     required: true

@@ -38,6 +38,7 @@ _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 # TODO: move operator configuration out of sources
 # Mapping from source job to destination job, boolean flag states if failed jobs should be synced as well.
 _CONFIG = {
+    "adviser": ("graph-sync-job-adviser", False),
     "solver": ("graph-sync-job-solver", False),
     "inspection": ("graph-sync-job-inspection", True),
     "package-extract": ("graph-sync-job-package-extract", False),

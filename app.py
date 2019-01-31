@@ -58,13 +58,21 @@ _CONFIG = {
     envvar="THOTH_OPERATOR_NAMESPACE",
     help="Namespace to connect to to wait for events.",
 )
-def cli(operator_namespace: str, verbose: bool = False):
+@click.option(
+    "--graph-sync-namespace",
+    type=str,
+    required=True,
+    envvar="THOTH_GRAPH_SYNC_NAMESPACE",
+    help="Namespace in which graph syncs should be run.",
+)
+def cli(operator_namespace: str, graph_sync_namespace: str, verbose: bool = False):
     """Operator handling Thoth's graph syncs."""
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
     _LOGGER.info(
-        "Graph sync operator is watching namespace %r", operator_namespace
+        "Graph sync operator is watching namespace %r and scheduling graph syncs in namespace %r",
+        operator_namespace, graph_sync_namespace
     )
 
     config.load_incluster_config()
@@ -114,7 +122,7 @@ def cli(operator_namespace: str, verbose: bool = False):
         try:
             graph_sync_id = _OPENSHIFT.schedule_graph_sync(
                 document_id,
-                operator_namespace,
+                graph_sync_namespace,
                 template_name=template_name
             )
             _LOGGER.info("Scheduled new graph sync with id %r", graph_sync_id)

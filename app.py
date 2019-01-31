@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# thoth-graph-sync-operator
+# thoth-graph-sync-scheduler
 # Copyright(C) 2018 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""Operator handling Thoth's graph syncs."""
+"""Scheduler handling Thoth's graph syncs."""
 
 import sys
 import os
@@ -31,11 +31,11 @@ from thoth.common import OpenShift
 
 init_logging()
 
-_LOGGER = logging.getLogger("thoth.graph_sync_operator")
+_LOGGER = logging.getLogger("thoth.graph_sync_scheduler")
 _OPENSHIFT = OpenShift()
 _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 
-# TODO: move operator configuration out of sources
+# TODO: move scheduler configuration out of sources
 # Mapping from source job to destination job, boolean flag states if failed jobs should be synced as well.
 _CONFIG = {
     "adviser": ("graph-sync-job-adviser", False),
@@ -49,14 +49,14 @@ _CONFIG = {
 @click.option(
     "--verbose",
     is_flag=True,
-    envvar="THOTH_OPERATOR_VERBOSE",
+    envvar="THOTH_SCHEDULER_VERBOSE",
     help="Be verbose about what is going on.",
 )
 @click.option(
-    "--operator-namespace",
+    "--scheduler-namespace",
     type=str,
     required=True,
-    envvar="THOTH_OPERATOR_NAMESPACE",
+    envvar="THOTH_SCHEDULER_NAMESPACE",
     help="Namespace to connect to to wait for events.",
 )
 @click.option(
@@ -66,14 +66,14 @@ _CONFIG = {
     envvar="THOTH_GRAPH_SYNC_NAMESPACE",
     help="Namespace in which graph syncs should be run.",
 )
-def cli(operator_namespace: str, graph_sync_namespace: str, verbose: bool = False):
-    """Operator handling Thoth's graph syncs."""
+def cli(scheduler_namespace: str, graph_sync_namespace: str, verbose: bool = False):
+    """Scheduler handling Thoth's graph syncs."""
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
     _LOGGER.info(
-        "Graph sync operator is watching namespace %r and scheduling graph syncs in namespace %r",
-        operator_namespace, graph_sync_namespace
+        "Graph sync scheduler is watching namespace %r and scheduling graph syncs in namespace %r",
+        scheduler_namespace, graph_sync_namespace
     )
 
     config.load_incluster_config()
@@ -83,7 +83,7 @@ def cli(operator_namespace: str, graph_sync_namespace: str, verbose: bool = Fals
     # Note that jobs do not support field selector pointing to phase (we could
     # do it on pod level, but that is not desired).
     for event in v1_jobs.watch(
-        namespace=operator_namespace, label_selector="operator=graph-sync"
+        namespace=scheduler_namespace, label_selector="operator=graph-sync"
     ):
         _LOGGER.debug("Checking event for %r", event["object"].metadata.name)
         if event["type"] != "MODIFIED":
@@ -115,7 +115,7 @@ def cli(operator_namespace: str, graph_sync_namespace: str, verbose: bool = Fals
 
         if not sync_failed and event["object"].status.failed:
             _LOGGER.info(
-                "Skipping failed job %r as operator was not configured to perform sync on failed jobs",
+                "Skipping failed job %r as scheduler was not configured to perform sync on failed jobs",
                 event["object"].metadata.name
             )
             continue

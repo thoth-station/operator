@@ -33,11 +33,11 @@ objects:
         metadata:
           labels:
             app: thoth
-            name: graph-sync-operator
+            name: graph-sync-scheduler
         spec:
           serviceAccountName: "${THOTH_SERVICE_ACCOUNT_NAME}"
           containers:
-            - name: graph-sync-operator
+            - name: graph-sync-scheduler
               env:
                 - name: KUBERNETES_API_URL
                   value: 'https://kubernetes.default.svc.cluster.local'		
@@ -58,11 +58,11 @@ objects:
                     configMapKeyRef:	
                       key: backend-namespace	
                       name: thoth
-                - name: THOTH_OPERATOR_NAMESPACE
-                  value: ${THOTH_OPERATOR_NAMESPACE}
+                - name: THOTH_SCHEDULER_NAMESPACE
+                  value: ${THOTH_SCHEDULER_NAMESPACE}
                 - name: THOTH_GRAPH_SYNC_NAMESPACE
                   value: ${THOTH_GRAPH_SYNC_NAMESPACE}
-                - name: THOTH_LOG_GRAPH_SYNC_OPERATOR
+                - name: THOTH_LOG_GRAPH_SYNC_SCHEDULER
                   value: INFO
                 - name: THOTH_INFRA_NAMESPACE
                   valueFrom:

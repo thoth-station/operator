@@ -41,6 +41,7 @@ _CONFIG = {
     "solver": ("graph-sync-job-solver", False),
     "inspection": ("graph-sync-job-inspection", True),
     "package-extract": ("graph-sync-job-package-extract", False),
+    "provenance-checker": ("graph-sync-job-provenance-checker", False),
 }
 
 

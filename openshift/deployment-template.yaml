@@ -3,19 +3,46 @@ kind: Template
 metadata:
   name: graph-sync-scheduler-deployment
   annotations:
-    description: This is Thoth - Graph Sync Scheduler
-    openshift.io/display-name: 'Thoth Core: Graph Sync Scheduler'
-    version: 0.0.1
-    tags: poc,thoth,graph-sync-scheduler,ai-stacks,aistacks
+    description: "This is Thoth - Graph Sync Scheduler"
+    openshift.io/display-name: "Thoth Core: Graph Sync Scheduler"
+    version: 0.1.0
+    tags: thoth,graph-sync-scheduler,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This template defines resources needed to deploy Thoth Graph Sync
       Scheduler on OpenShift.
-    template.openshift.io/provider-display-name: Red Hat, Inc.
+    template.openshift.io/provider-display-name: "Red Hat, Inc."
   labels:
     template: graph-sync-scheduler-deployment
     app: thoth
     component: graph-sync-scheduler
+
+parameters:
+  - description: Project the ImageStream to be use lives in
+    displayName: ImageStream Project
+    required: true
+    name: IMAGE_STREAM_PROJECT_NAME
+
+  - description: Tag of the ImageStream to be use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: "latest"
+
+  - description: Service account to be used which allows scheduler to schedule graph syncs in operated namespace
+    displayName: Service account name.
+    required: true
+    name: SERVICE_ACCOUNT_NAME
+
+  - description: Project Name in which the operator is watching events.
+    displayName: Operator project name.
+    required: true
+    name: OPERATOR_PROJECT_NAME
+
+  - name: GRAPH_SYNC_PROJECT_NAME
+    description: Project Name in which graph syncs should be scheduled and run.
+    displayName: Graph sync project name.
+    required: true
 
 objects:
   - kind: DeploymentConfig
@@ -24,7 +51,7 @@ objects:
       labels:
         app: thoth
         component: graph-sync-scheduler
-      name: "graph-sync-scheduler-${THOTH_SCHEDULER_NAMESPACE}"
+      name: "graph-sync-scheduler-${OPERATOR_PROJECT_NAME}"
     spec:
       replicas: 1
       selector:
@@ -35,33 +62,33 @@ objects:
             app: thoth
             name: graph-sync-scheduler
         spec:
-          serviceAccountName: "${THOTH_SERVICE_ACCOUNT_NAME}"
+          serviceAccountName: "${SERVICE_ACCOUNT_NAME}"
           containers:
             - name: graph-sync-scheduler
               env:
                 - name: KUBERNETES_API_URL
-                  value: 'https://kubernetes.default.svc.cluster.local'		
-                - name: KUBERNETES_VERIFY_TLS		
-                  value: "0"		
-                - name: THOTH_FRONTEND_NAMESPACE		
-                  valueFrom:		
-                    configMapKeyRef:		
-                      key: frontend-namespace		
+                  value: "https://kubernetes.default.svc.cluster.local"
+                - name: KUBERNETES_VERIFY_TLS
+                  value: "0"
+                - name: THOTH_FRONTEND_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: frontend-namespace
                       name: thoth
-                - name: THOTH_MIDDLETIER_NAMESPACE	
-                  valueFrom:	
-                    configMapKeyRef:	
-                      key: middletier-namespace	
+                - name: THOTH_MIDDLETIER_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: middletier-namespace
                       name: thoth
-                - name: THOTH_BACKEND_NAMESPACE	
-                  valueFrom:	
-                    configMapKeyRef:	
-                      key: backend-namespace	
+                - name: THOTH_BACKEND_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: backend-namespace
                       name: thoth
                 - name: THOTH_SCHEDULER_NAMESPACE
-                  value: ${THOTH_SCHEDULER_NAMESPACE}
+                  value: ${OPERATOR_PROJECT_NAME}
                 - name: THOTH_GRAPH_SYNC_NAMESPACE
-                  value: ${THOTH_GRAPH_SYNC_NAMESPACE}
+                  value: ${GRAPH_SYNC_PROJECT_NAME}
                 - name: THOTH_LOG_GRAPH_SYNC_SCHEDULER
                   value: INFO
                 - name: THOTH_INFRA_NAMESPACE
@@ -101,26 +128,5 @@ objects:
               - graph-sync-scheduler
             from:
               kind: ImageStreamTag
-              name: 'graph-sync-scheduler:${IMAGE_STREAM_TAG}'
-
-parameters:
-  - description: Tag of the ImageStream to use
-    displayName: ImageStream Tag
-    required: true
-    name: IMAGE_STREAM_TAG
-    value: 'latest'
-
-  - description: Name of the service account which allows scheduler schedule graph syncs in operated namespace.
-    displayName: Service account name
-    required: true
-    name: THOTH_SERVICE_ACCOUNT_NAME
-
-  - name: THOTH_SCHEDULER_NAMESPACE
-    description: Namespace in which scheduler is handling events.
-    displayName: Scheduler namespace
-    required: true
-
-  - name: THOTH_GRAPH_SYNC_NAMESPACE
-    description: Namespace in which graph syncs should be run.
-    displayName: Graph sync namespace
-    required: true
+              namespace: "${IMAGE_STREAM_PROJECT_NAME}"
+              name: "graph-sync-scheduler:${IMAGE_STREAM_TAG}"

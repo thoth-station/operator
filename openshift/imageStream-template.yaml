@@ -4,18 +4,27 @@ metadata:
   name: graph-sync-scheduler-imagestream
   annotations:
     description: >
-      This is Scheduler ImageStream, this template is meant to be used by Bots, but could also be used by humans...
-    openshift.io/display-name: 'Thoth Core: Scheduler'
-    version: 0.0.1
-    tags: poc,thoth,graph-sync-scheduler,ai-stacks,aistacks
+      This is Scheduler ImageStream, this template is meant to be used by Bots,
+      but could also be used by humans...
+    openshift.io/display-name: "Thoth Core: Scheduler"
+    version: 0.1.0
+    tags: thoth,graph-sync-scheduler,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
-      This is Scheduler ImageStream, this template is meant to be used by Bots, but could also be used by humans...
-    template.openshift.io/provider-display-name: Red Hat, Inc.
+      This is Scheduler ImageStream, this template is meant to be used by Bots,
+      but could also be used by humans...
+    template.openshift.io/provider-display-name: "Red Hat, Inc."
   labels:
     template: graph-sync-scheduler-imagestream
     app: thoth
     component: graph-sync-scheduler
+
+parameters:
+  - description: Tag of the ImageStream to be use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: "latest"
 
 objects:
   - kind: ImageStream
@@ -29,10 +38,3 @@ objects:
       name: ${IMAGE_STREAM_TAG}
       lookupPolicy:
         local: true
-
-parameters:
-  - description: Tag of the ImageStream to use
-    displayName: ImageStream Tag
-    required: true
-    name: IMAGE_STREAM_TAG
-    value: 'latest'

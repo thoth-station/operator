@@ -6,18 +6,38 @@ metadata:
     description: >
       This is Thoth Graph Sync Scheduler BuildConfig, this template is meant to
       be used by Bots, but could also be used by humans...
-    openshift.io/display-name: 'Thoth Core: Graph Sync Scheduler BuildConfig'
-    version: 0.0.1
+    openshift.io/display-name: "Thoth Core: Graph Sync Scheduler BuildConfig"
+    version: 0.1.0
     tags: thoth,graph-sync-scheduler,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This is Thoth Graph Sync Scheduler BuildConfig, this template is meant to
       be used by Bots, but could also be used by humans...
-    template.openshift.io/provider-display-name: Red Hat, Inc.
+    template.openshift.io/provider-display-name: "Red Hat, Inc."
   labels:
     template: graph-sync-scheduler-buildconfig
     app: thoth
     component: graph-sync-scheduler
+
+parameters:
+  - description: Name of the github repository for Thoth's Graph Sync Scheduler
+    displayName: Git Repository
+    required: true
+    name: GITHUB_URL
+    value: "https://github.com/thoth-station/graph-sync-scheduler"
+
+  - description: Git reference to be used for Thoth's Graph Sync Scheduler
+    displayName: Git Reference
+    required: true
+    name: GITHUB_REF
+    value: "master"
+
+  - description: >
+      Tag of the output ImageStream the resulting container image should go to
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: "latest"
 
 objects:
   - apiVersion: build.openshift.io/v1
@@ -54,29 +74,9 @@ objects:
             name: python-36-centos7:latest
           env:
             - name: ENABLE_PIPENV
-              value: '1'
+              value: "1"
             - name: UPGRADE_PIP_TO_LATEST
-              value: ''
+              value: ""
       triggers:
         - type: ImageChange
           imageChange: {}
-
-parameters:
-  - description: Name of the github repository for Thoth's Graph Sync Scheduler
-    displayName: Git Repository
-    required: true
-    name: GITHUB_URL
-    value: 'https://github.com/thoth-station/graph-sync-scheduler'
-
-  - description: Git reference to be used for Thoth's Graph Sync Scheduler
-    displayName: Git Reference
-    required: true
-    name: GITHUB_REF
-    value: 'master'
-
-  - description: >
-      Tag of the output ImageStream the resulting container image should go to
-    displayName: ImageStream Tag
-    required: true
-    name: IMAGE_STREAM_TAG
-    value: 'latest'

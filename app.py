@@ -27,6 +27,7 @@ import click
 
 from thoth.common import init_logging
 from thoth.common import OpenShift
+from thoth.common import __version__ as thoth_common_version
 
 init_logging()
 
@@ -114,6 +115,11 @@ def cli(scheduler_namespace: str, graph_sync_namespace: str, verbose: bool = Fal
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
+    _LOGGER.info(
+        "Graph sync scheduler is running thoth-common in version %r, built from %r",
+        thoth_common_version,
+        os.getenv("OPENSHIFT_BUILD_COMMIT")
+    )
     _LOGGER.info(
         "Graph sync scheduler is watching namespace %r and scheduling graph syncs in namespace %r",
         scheduler_namespace, graph_sync_namespace

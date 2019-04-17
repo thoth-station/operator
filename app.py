@@ -43,6 +43,7 @@ _CONFIG = {
     "inspection": ("graph-sync-job-inspection", True),
     "package-extract": ("graph-sync-job-package-extract", False),
     "provenance-checker": ("graph-sync-job-provenance-checker", False),
+    "dependency-monkey": ("graph-sync-job-dependency-monkey", False),
 }
 
 

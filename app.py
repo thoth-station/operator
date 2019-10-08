@@ -38,13 +38,13 @@ _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 # TODO: move scheduler configuration out of sources
 # Mapping from source job to destination job, boolean flag states if failed jobs should be synced as well.
 _CONFIG = {
-    "adviser": ("graph-sync-job-adviser", False),
-    "solver": ("graph-sync-job-solver", False),
-    "inspection": ("graph-sync-job-inspection", True),
-    "package-extract": ("graph-sync-job-package-extract", False),
-    "package-analyzer": ("graph-sync-job-package-analyzer", False),
-    "provenance-checker": ("graph-sync-job-provenance-checker", False),
-    "dependency-monkey": ("graph-sync-job-dependency-monkey", False),
+    "adviser": (OpenShift.schedule_graph_sync_adviser, False),
+    "package-analyzer": (OpenShift.schedule_graph_sync_package_analyzer, False),
+    "inspection": (OpenShift.schedule_graph_sync_inspection, True),
+    "provenance-checker": (OpenShift.schedule_graph_sync_provenance_checker, False),
+    "solver": (OpenShift.schedule_graph_sync_solver, False),
+    "package-extract": (OpenShift.schedule_graph_sync_package_extract, False),
+    "dependency-monkey": (OpenShift.schedule_graph_sync_dependency_monkey, False),
 }
 
 
@@ -77,7 +77,7 @@ def event_producer(queue: Queue, scheduler_namespace: str):
             _LOGGER.error("No configuration entry provided for task %r in graph sync operator", task_name)
             continue
 
-        template_name, sync_failed = target
+        method, sync_failed = target
 
         if not sync_failed and event["object"].status.failed:
             _LOGGER.info(
@@ -88,7 +88,7 @@ def event_producer(queue: Queue, scheduler_namespace: str):
 
         # Document id directly matches job name.
         document_id = event["object"].metadata.name
-        queue.put((template_name, document_id))
+        queue.put((method.__name___name, document_id))
 
 
 @click.command()
@@ -134,20 +134,21 @@ def cli(scheduler_namespace: str, graph_sync_namespace: str, verbose: bool = Fal
 
     producer.start()
     while producer.is_alive():
-        template_name, document_id = queue.get()
+        method_name, document_id = queue.get()
 
         try:
-            graph_sync_id = openshift.schedule_graph_sync(
+            method = getattr(OpenShift, method_name)
+            graph_sync_id = method(
+                openshift,
                 document_id,
-                graph_sync_namespace,
-                template_name=template_name
+                namespace=graph_sync_namespace,
             )
             _LOGGER.info("Scheduled new graph sync with id %r", graph_sync_id)
         except Exception as exc:
             _LOGGER.exception(
-                "Failed to run sync for document id %r, the template to be triggered was %r: %s",
+                "Failed to run sync for document id %r, the method to be triggered was %r: %s",
                 document_id,
-                template_name,
+                method_name,
                 exc
             )
 

@@ -82,22 +82,17 @@ def event_producer(queue: Queue, scheduler_namespace: str):
         if not sync_failed and event["object"].status.failed:
             _LOGGER.info(
                 "Skipping failed job %r as scheduler was not configured to perform sync on failed jobs",
-                event["object"].metadata.name
+                event["object"].metadata.name,
             )
             continue
 
         # Document id directly matches job name.
         document_id = event["object"].metadata.name
-        queue.put((method.__name___, document_id))
+        queue.put((method.__name__, document_id))
 
 
 @click.command()
-@click.option(
-    "--verbose",
-    is_flag=True,
-    envvar="THOTH_SCHEDULER_VERBOSE",
-    help="Be verbose about what is going on.",
-)
+@click.option("--verbose", is_flag=True, envvar="THOTH_SCHEDULER_VERBOSE", help="Be verbose about what is going on.")
 @click.option(
     "--scheduler-namespace",
     type=str,
@@ -120,11 +115,12 @@ def cli(scheduler_namespace: str, graph_sync_namespace: str, verbose: bool = Fal
     _LOGGER.info(
         "Graph sync scheduler is running thoth-common in version %r, built from %r",
         thoth_common_version,
-        os.getenv("OPENSHIFT_BUILD_COMMIT")
+        os.getenv("OPENSHIFT_BUILD_COMMIT"),
     )
     _LOGGER.info(
         "Graph sync scheduler is watching namespace %r and scheduling graph syncs in namespace %r",
-        scheduler_namespace, graph_sync_namespace
+        scheduler_namespace,
+        graph_sync_namespace,
     )
 
     openshift = OpenShift()
@@ -138,18 +134,14 @@ def cli(scheduler_namespace: str, graph_sync_namespace: str, verbose: bool = Fal
 
         try:
             method = getattr(OpenShift, method_name)
-            graph_sync_id = method(
-                openshift,
-                document_id,
-                namespace=graph_sync_namespace,
-            )
+            graph_sync_id = method(openshift, document_id, namespace=graph_sync_namespace)
             _LOGGER.info("Scheduled new graph sync with id %r", graph_sync_id)
         except Exception as exc:
             _LOGGER.exception(
                 "Failed to run sync for document id %r, the method to be triggered was %r: %s",
                 document_id,
                 method_name,
-                exc
+                exc,
             )
 
     producer.join()

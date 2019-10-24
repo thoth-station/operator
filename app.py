@@ -88,7 +88,7 @@ def event_producer(queue: Queue, scheduler_namespace: str):
 
         # Document id directly matches job name.
         document_id = event["object"].metadata.name
-        queue.put((method.__name___name, document_id))
+        queue.put((method.__name___, document_id))
 
 
 @click.command()

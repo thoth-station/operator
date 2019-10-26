@@ -7,13 +7,14 @@ metadata:
       This is Scheduler ImageStream, this template is meant to be used by Bots,
       but could also be used by humans...
     openshift.io/display-name: "Thoth Core: Scheduler"
-    version: 0.1.0
+    version: 0.2.0
     tags: thoth,graph-sync-scheduler,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This is Scheduler ImageStream, this template is meant to be used by Bots,
       but could also be used by humans...
     template.openshift.io/provider-display-name: "Red Hat, Inc."
+    thoth-station.ninja/template-version: 0.2.0
   labels:
     template: graph-sync-scheduler-imagestream
     app: thoth
@@ -30,6 +31,8 @@ objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.2.0
       labels:
         app: thoth
         component: graph-sync-scheduler

@@ -5,13 +5,14 @@ metadata:
   annotations:
     description: "This is Thoth - Graph Sync Scheduler"
     openshift.io/display-name: "Thoth Core: Graph Sync Scheduler"
-    version: 0.1.0
+    version: 0.2.0
     tags: thoth,graph-sync-scheduler,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This template defines resources needed to deploy Thoth Graph Sync
       Scheduler on OpenShift.
     template.openshift.io/provider-display-name: "Red Hat, Inc."
+    thoth-station.ninja/template-version: 0.2.0
   labels:
     template: graph-sync-scheduler-deployment
     app: thoth
@@ -48,6 +49,8 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.2.0
       labels:
         app: thoth
         component: graph-sync-scheduler

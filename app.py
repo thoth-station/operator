@@ -39,6 +39,7 @@ _INFRA_NAMESPACE = os.environ["THOTH_INFRA_NAMESPACE"]
 # Mapping from source job to destination job, boolean flag states if failed jobs should be synced as well.
 _CONFIG = {
     "adviser": (OpenShift.schedule_graph_sync_adviser, False),
+    "build-report": (OpenShift.schedule_graph_sync_build_report, False),
     "package-analyzer": (OpenShift.schedule_graph_sync_package_analyzer, False),
     "inspection": (OpenShift.schedule_graph_sync_inspection, True),
     "provenance-checker": (OpenShift.schedule_graph_sync_provenance_checker, False),

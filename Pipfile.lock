@@ -18,10 +18,10 @@
     "default": {
         "argo-workflows": {
             "hashes": [
-                "sha256:b94c3d7d8406040cb11c704368372b4a1db4e0b097d5c51095375b1ec311a7e8",
-                "sha256:e56e94b788da26aac7a23dc2284889b77ef7cd488822044fc71615e1d7fb93ec"
+                "sha256:c0d222096759c5cb354328fa0ea2acf376933abf89c39134093ca96d50a72051",
+                "sha256:d8d4c1382ff5a0d23291d6b63d83bf57442343b80cb1c39bfdaec6bfd4aeff3e"
             ],
-            "version": "==3.0.3"
+            "version": "==3.2.0"
         },
         "attrdict": {
             "hashes": [
@@ -163,10 +163,10 @@
         },
         "openshift": {
             "hashes": [
-                "sha256:d8462c4bc3eaaa5a11623d6d67048c3e0b16558fa23675ffd85157d66696ff39"
+                "sha256:bfc398aac8ad9d903b520e473290ebc35d9c9a739c8e083fde55d93288c7f67d"
             ],
             "index": "pypi",
-            "version": "==0.10.3"
+            "version": "==0.11.0"
         },
         "pyasn1": {
             "hashes": [
@@ -288,10 +288,10 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:480eee754e60bcae983787a9a13bc8f155a111aef199afaa4f289d6a76aa622a",
-                "sha256:a920387dc3ee252a66679d0afecd34479fb6fc52c2bc20763793ed69e5b0dcc0"
+                "sha256:23808d571d2461a4ce3784ec12bbee5bdb8c026c143fe79d36cef8a6d653e71f",
+                "sha256:bb90a4e19c7233a580715fc986cc44be2c48fc10b31e71580a2037e1c94b6950"
             ],
-            "version": "==0.14.2"
+            "version": "==0.14.3"
         },
         "six": {
             "hashes": [

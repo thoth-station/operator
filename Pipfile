@@ -7,8 +7,8 @@ verify_ssl = true
 
 [packages]
 thoth-common = "*"
-openshift = "*"
-kubernetes = "*"
+openshift = "~=0.10.0"
+kubernetes = "==10.0.0"
 click = "*"
 pyyaml = "*"
 
